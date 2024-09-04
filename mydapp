@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Your dApp</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+  <h1>Welcome to My dApp</h1>
+  <p>Connect your wallet and interact with the smart contract.</p>
+
+  <button id="connectButton">Connect Wallet</button>
+  <button id="interactButton">Interact with Contract</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/ethers@latest/dist/ethers.min.js"></script>
+  <script>
+    let signer;
+    let contract;
+
+    // ABI and Contract Address
+    const contractABI = [{"anonymous":false,"inputs":[{"indexed":false,"internalType":"string","name":"operation","type":"string"},{"indexed":false,"internalType":"int256","name":"operand1","type":"int256"},{"indexed":false,"internalType":"int256","name":"operand2","type":"int256"},{"indexed":false,"internalType":"int256","name":"result","type":"int256"}],"name":"CalculationPerformed","type":"event"},{"inputs":[{"internalType":"int256","name":"a","type":"int256"},{"internalType":"int256","name":"b","type":"int256"}],"name":"add","outputs":[{"internalType":"int256","name":"","type":"int256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"clearLastResult","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"int256","name":"a","type":"int256"},{"internalType":"int256","name":"b","type":"int256"}],"name":"divide","outputs":[{"internalType":"int256","name":"","type":"int256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"n","type":"uint256"}],"name":"factorial","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getLastResult","outputs":[{"internalType":"int256","name":"","type":"int256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"int256","name":"a","type":"int256"},{"internalType":"int256","name":"b","type":"int256"}],"name":"modulo","outputs":[{"internalType":"int256","name":"","type":"int256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"int256","name":"a","type":"int256"},{"internalType":"int256","name":"b","type":"int256"}],"name":"multiply","outputs":[{"internalType":"int256","name":"","type":"int256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"int256","name":"base","type":"int256"},{"internalType":"uint256","name":"exponent","type":"uint256"}],"name":"power","outputs":[{"internalType":"int256","name":"","type":"int256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"x","type":"uint256"}],"name":"sqrt","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"int256","name":"a","type":"int256"},{"internalType":"int256","name":"b","type":"int256"}],"name":"subtract","outputs":[{"internalType":"int256","name":"","type":"int256"}],"stateMutability":"nonpayable","type":"function"}];
+
+    const contractAddress = '0xYourContractAddressHere';
+
+    async function connectWallet() {
+      if (window.ethereum) {
+        try {
+          // Request account access
+          const provider = new ethers.providers.Web3Provider(window.ethereum);
+          await provider.send("eth_requestAccounts", []);
+          signer = provider.getSigner();
+
+          // Display connected account
+          const address = await signer.getAddress();
+          alert(`Connected: ${address}`);
+
+          // Create a contract instance
+          contract = new ethers.Contract(contractAddress, contractABI, signer);
+        } catch (error) {
+          console.error("Error connecting to MetaMask:", error);
+        }
+      } else {
+        alert('Non-Ethereum browser detected. Please install MetaMask!');
+      }
+    }
+
+    async function interactWithContract() {
+      if (contract) {
+        try {
+          // Example interaction - calling getLastResult method
+          const result = await contract.getLastResult();
+          console.log(result);
+          alert(`Last Calculation Result: ${result}`);
+        } catch (error) {
+          console.error("Error interacting with contract:", error);
+        }
+      } else {
+        alert('Please connect your wallet first!');
+      }
+    }
+
+    // Event Listeners
+    document.getElementById('connectButton').addEventListener('click', connectWallet);
+    document.getElementById('interactButton').addEventListener('click', interactWithContract);
+  </script>
+</body>
+
+</html>
